@@ -1,0 +1,3 @@
+---
+- name: Del Users
+  command: bash -c "cat roles/del-users/files/del-users.rsc | ssh -T {{inventory_hostname}} -p {{ansible_ssh_port}}"  

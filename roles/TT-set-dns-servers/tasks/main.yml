@@ -1,0 +1,3 @@
+---
+- name: Configure DNS servers
+  command: bash -c "cat roles/TT-set-dns-servers/files/dns-servers.rsc | ssh -T {{inventory_hostname}} -p {{ansible_ssh_port}}"  

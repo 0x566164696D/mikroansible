@@ -1,0 +1,3 @@
+---
+- name: TT  WiFi Setup (Add service AP, change frequency, etc)
+  command: bash -c "cat roles/TT-WiFi-Setup/files/script.rsc | ssh -T {{inventory_hostname}} -p {{ansible_ssh_port}}"  

@@ -1,0 +1,100 @@
+:delay 3
+###### VARS
+:global identity "{{identity}}"
+:global ssid "{{ssid}}"
+:global key "{{key}}"
+:global frequency "{{frequency}}"
+:global txpower "{{txpower}}"
+
+/interface ethernet set number=[/interface ethernet find default-name="ether1"] name="LAN"
+
+:do { /interface bridge add name=bridge } on-error={}
+
+/interface wireless security-profiles
+set [ find default=yes ] authentication-types=wpa2-psk mode=dynamic-keys \
+    wpa2-pre-shared-key=CHANGE_ME!!!
+add authentication-types=wpa2-psk mode=dynamic-keys name=$ssid \
+    wpa2-pre-shared-key=$key
+
+/interface wireless
+set [ find default-name=wlan1 ] band=2ghz-b country=russia disabled=no \
+    distance=indoors frequency=$frequency frequency-mode=regulatory-domain \
+    keepalive-frames=disabled mode=ap-bridge security-profile=$ssid ssid=\
+    $ssid tx-power=$txpower tx-power-mode=all-rates-fixed wireless-protocol=802.11
+
+/ip neighbor discovery
+set wlan1 discover=no
+
+/interface bridge port
+add bridge=bridge interface=LAN
+add bridge=bridge interface=wlan1
+/interface bridge set bridge admin-mac=[/interface ethernet get LAN mac-address]
+/interface bridge set bridge auto-mac=no
+
+/interface bridge settings
+set use-ip-firewall=yes
+
+/ip dhcp-client
+add dhcp-options=hostname,clientid disabled=no interface=bridge
+
+/ip firewall address-list
+add address=192.168.0.9 list=citrix_and_rds
+add address=192.168.0.3 list=admins
+
+/ip firewall filter
+add chain=forward comment=Established connection-state=established
+add chain=forward comment=Related connection-state=related
+add chain=forward comment="From Admins" src-address-list=admins
+add chain=forward comment=TSD dst-address-list=citrix_and_rds dst-port=\
+    10024-10199 protocol=tcp
+add chain=forward comment="DHCP and NTP" dst-port=67-68,123 protocol=udp
+add action=drop chain=forward log=yes
+add chain=input comment="Established and related" connection-state=\
+    established,related
+add chain=input comment=ICMP protocol=icmp
+add chain=input comment="From Admins" src-address-list=admins
+add action=drop chain=input in-interface=all-wireless
+
+/ip service
+set telnet disabled=yes
+set ftp disabled=yes
+set www disabled=yes
+set api disabled=yes
+set api-ssl disabled=yes
+
+/system clock set time-zone-name=Europe/Moscow
+/system identity set name=$identity
+
+/system ntp client
+set enabled=yes primary-ntp=192.168.251.254 secondary-ntp=91.189.94.4
+
+:do { /system package disable mpls } on-error={}
+:do { /system package disable hotspot } on-error={}
+:do { /system package disable ppp } on-error={}
+:do { /system package disable routing } on-error={}
+:do { /system package disable ipv6 } on-error={}
+:do { /system package disable wireless-fp } on-error={}
+:do { /system package enable wireless-cm2 } on-error={} 
+
+/snmp community set [ find default=yes ] addresses=192.168.0.3/32 name=SomeCommunity
+/snmp set enabled=yes
+
+#########################################################
+/user set admin password="CHANGE_ME!"
+/user add name=mikroansible group=full password="CHANGE_ME!"
+/file print file=mikroansible_key.txt
+:delay 2
+/file set mikroansible_key.txt contents="PASTE_RSA_PUB_KEY_HERE"
+:delay 2
+/user ssh-keys import user=mikroansible public-key-file=mikroansible_key.txt
+
+### beep if config succsess
+:do {:beep frequency=1320 length=150ms; :delay 200ms; :beep frequency=1320 length=150ms; :delay 200ms; :beep frequency=1320 length=150ms; :delay 200ms; :beep frequency=1320 length=150ms; :delay 200ms; :beep frequency=1568 length=150ms; :delay 200ms; :beep frequency=1760 length=150ms; :delay 200ms; :beep frequency=1568 length=150ms; :delay 200ms; :beep frequency=1760 length=150ms; :delay 500ms;} on-error={}
+:do {:beep frequency=5000 length=200ms;delay 220ms;:beep frequency=5000 length=200ms;} on-error={}
+
+:if ( [/system routerboard get current-firmware] != [/system routerboard get upgrade-firmware]) do={
+:log info message= "debug upgrade FW"
+/system routerboard upgrade
+:delay 10
+/system reboot
+}

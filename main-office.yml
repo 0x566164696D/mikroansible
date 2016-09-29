@@ -1,0 +1,13 @@
+---
+- hosts: main-office
+  user: mikroansible
+  gather_facts: no  
+  connection: local
+  roles:
+    - email-setup    
+    - addr-list-admin
+    - routing-filter
+    - del-users
+    - route-dummy-rule
+    - snmp
+    - web-proxy-disable

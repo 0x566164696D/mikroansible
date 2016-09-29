@@ -1,0 +1,16 @@
+---
+- hosts: TT
+  user: mikroansible
+  gather_facts: no  
+  connection: local
+  roles:
+    - connection-check
+    - web-proxy-disable
+    - email-setup    
+    - script-fw-check
+    - services
+    - scritp-route-distance-check
+    - socks-disable
+    - script-badblock-check
+    - TT-WiFi-Setup
+    - TT-set-dns-servers

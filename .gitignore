@@ -1,0 +1,5 @@
+.ansible-retry/*
+build/*
+inventory/*
+log/*
+roles/New-WiFi-AP-setup/files/tmp/*

@@ -1,0 +1,3 @@
+---
+- name: Configure SNMP
+  command: bash -c "cat roles/snmp/files/snmp.rsc | ssh -T {{inventory_hostname}} -p {{ansible_ssh_port}}"  

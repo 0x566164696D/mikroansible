@@ -1,0 +1,15 @@
+---
+- name: Generate random password via pwgen
+  command: "pwgen -s 19 1"
+  register: random_passwd
+
+#- debug: var=random_passwd.stdout
+
+- name: Generate .rsc to check and add user
+  template: src=add_ansible_user.rsc.j2 dest=roles/add-to-ansible/files/tmp/{{inventory_hostname}}.rsc
+
+- name: Run .rsc script
+  command: bash -c "cat roles/add-to-ansible/files/tmp/{{inventory_hostname}}.rsc | sshpass -p "{{ros_passwd}}" ssh {{ros_login}}@{{inventory_hostname}} -p {{ansible_ssh_port}} -T -o StrictHostKeyChecking=no -o NumberOfPasswordPrompts=1"
+
+- name: Delete temp .rsc file
+  file: path=roles/add-to-ansible/files/tmp/{{inventory_hostname}}.rsc state=absent

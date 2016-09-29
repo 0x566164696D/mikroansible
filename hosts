@@ -1,0 +1,10 @@
+[init]
+192.168.45.254
+
+[main-office]
+192.168.10.254 ansible_ssh_port=34259
+
+[ADD-to-Ansible]
+10.32.69.254
+
+[TT]

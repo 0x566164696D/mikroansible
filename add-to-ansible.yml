@@ -1,0 +1,14 @@
+---
+- hosts: ADD-to-Ansible  
+  gather_facts: no  
+  connection: local
+  roles:
+    - add-to-ansible
+  vars_prompt:
+   - name: "ros_login"
+     prompt: "Enter login"
+     private: no
+   
+   - name: "ros_passwd"
+     prompt: "Enter password"
+     private: yes

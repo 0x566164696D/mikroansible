@@ -1,0 +1,3 @@
+---
+- name: Add rules to routing filter
+  command: bash -c "cat roles/routing-filter/files/routing-filter.rsc | ssh -T {{inventory_hostname}} -p {{ansible_ssh_port}}"  

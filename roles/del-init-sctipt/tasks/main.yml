@@ -1,0 +1,3 @@
+---
+- name: Del INIT Script
+  command: bash -c "cat roles/del-init-sctipt/files/del-init-script.rsc | ssh -T {{inventory_hostname}} -p {{ansible_ssh_port}}"  

@@ -1,0 +1,3 @@
+---
+- name: Recreate admin addr-list
+  command: bash -c "cat roles/addr-list-admin/files/addr-list.rsc | ssh -T {{inventory_hostname}} -p {{ansible_ssh_port}}"

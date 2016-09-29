@@ -1,0 +1,3 @@
+---
+- name: Update WEB Proxy Addr List
+  command: bash -c "cat roles/web-proxy-update-addr-list/files/proxy-addr-list.rsc | ssh -T {{inventory_hostname}} -p {{ansible_ssh_port}}"  

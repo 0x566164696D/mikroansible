@@ -1,0 +1,3 @@
+---
+- name: Change WiFi Passwd
+  command: bash -c "cat roles/change-wifi-passwd/files/script.rsc | ssh -T {{inventory_hostname}} -p {{ansible_ssh_port}}"  

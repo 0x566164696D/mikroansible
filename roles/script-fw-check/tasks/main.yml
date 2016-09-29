@@ -1,0 +1,12 @@
+---
+- name: Check for script exists
+  command: bash -c "cat roles/script-fw-check/files/check.rsc | ssh -T {{inventory_hostname}} -p {{ansible_ssh_port}}"
+  register: FWscriptExists
+
+- name: if script not exist upload it
+  command: "scp -P {{ansible_ssh_port}} roles/script-fw-check/files/fw-check.rsc {{ansible_ssh_user}}@{{inventory_hostname}}:/fw-check.rsc"
+  when: FWscriptExists.stdout != "EXISTS"
+
+- name: if script not exist install it
+  command: "ssh -T -p {{ansible_ssh_port}} {{ansible_ssh_user}}@{{inventory_hostname}} '/import file=fw-check.rsc'"
+  when: FWscriptExists.stdout != "EXISTS"

@@ -1,0 +1,26 @@
+---
+# hostname like DCS-
+- name: Check for script dhcp_autolease_DCS exists
+  command: bash -c "cat roles/script-autoDHCP-leases/files/check-dhcp_autolease_DCS.rsc | ssh -T {{inventory_hostname}} -p {{ansible_ssh_port}}"
+  register: DCSEsixts
+
+- name: if script not exist upload it
+  command: "scp -P {{ansible_ssh_port}} roles/script-autoDHCP-leases/files/dhcp_autolease_DCS.rsc {{ansible_ssh_user}}@{{inventory_hostname}}:/dhcp_autolease_DCS.rsc"
+  when: DCSEsixts.stdout != "EXISTS"
+
+- name: if script not exist install it
+  command: "ssh -T -p {{ansible_ssh_port}} {{ansible_ssh_user}}@{{inventory_hostname}} '/import file=dhcp_autolease_DCS.rsc'"
+  when: DCSEsixts.stdout != "EXISTS"
+
+# hostname like init
+- name: Check for script dhcp_autolease_Kiosk exists
+  command: bash -c "cat roles/script-autoDHCP-leases/files/check-dhcp_autolease_Kiosk.rsc | ssh -T {{inventory_hostname}} -p {{ansible_ssh_port}}"
+  register: KioskEsixts
+
+- name: if script not exist upload it
+  command: "scp -P {{ansible_ssh_port}} roles/script-autoDHCP-leases/files/dhcp_autolease_Kiosk.rsc {{ansible_ssh_user}}@{{inventory_hostname}}:/dhcp_autolease_Kiosk.rsc"
+  when: KioskEsixts.stdout != "EXISTS"
+
+- name: if script not exist install it
+  command: "ssh -T -p {{ansible_ssh_port}} {{ansible_ssh_user}}@{{inventory_hostname}} '/import file=dhcp_autolease_Kiosk.rsc'"
+  when: KioskEsixts.stdout != "EXISTS"

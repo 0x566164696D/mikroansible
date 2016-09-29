@@ -1,0 +1,40 @@
+---
+- name: Check router connection
+  command: bash -c "cat roles/connection-check/files/check.rsc | ssh {{inventory_hostname}} -T -p {{ansible_ssh_port}}"  
+  register: connect_result
+  ignore_errors: True
+
+#- debug: var=connect_result.stderr
+
+- local_action: mail
+                host='smtp.gmail.com'
+                port=587
+                username=user@gmail.com
+                password='passwd'
+                to="alert@example.com"
+                subject='Ansible-report. SSH server key check failed - {{ inventory_hostname }}'
+                body='Router {{ inventory_hostname }} \n\n {{connect_result.stderr}}'
+  when: '"WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!" in connect_result.stderr'
+
+- local_action: mail
+                host='smtp.gmail.com'
+                port=587
+                username=user@gmail.com
+                password='passwd'
+                to="alert@example.com"
+                subject='Ansible-report. Auth. problem. - {{ inventory_hostname }}'
+                body='Router {{ inventory_hostname }} \n\n {{connect_result.stderr}}'
+  when: '"Received disconnect from" in connect_result.stderr'
+
+- local_action: mail
+                host='smtp.gmail.com'
+                port=587
+                username=user@gmail.com
+                password='passwd'
+                to="alert@example.com"
+                subject='Ansible-report. No RSA host key is known for {{ inventory_hostname }}'
+                body='Router {{ inventory_hostname }} \n\n {{connect_result.stderr}}'
+  when: '"No RSA host key is known for" in connect_result.stderr'
+
+
+

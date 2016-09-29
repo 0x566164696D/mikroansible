@@ -1,0 +1,3 @@
+:if ([/user find name={{ansible_mgmt_user}}] ="") do={ :log info "User {{ansible_mgmt_user}} not found... Add it"}
+:if ([/user find name={{ansible_mgmt_user}}] ="") do={/file print file=ansible_key.txt; :delay 2; /file set ansible_key.txt contents="{{ansible_mgmt_user_key}}";}
+:if ([/user find name={{ansible_mgmt_user}}] ="") do={/user add name={{ansible_mgmt_user}} group=full password="{{random_passwd.stdout}}"; :delay 2; /user ssh-keys import user={{ansible_mgmt_user}} public-key-file=ansible_key.txt}

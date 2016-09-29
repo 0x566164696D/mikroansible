@@ -1,0 +1,16 @@
+---
+- name: Check for script exists
+  command: bash -c "cat roles/script-imperial-march/files/check.rsc | ssh -T {{inventory_hostname}} -p {{ansible_ssh_port}}"
+  register: ImperialScriptExists
+
+- name: if script not exist upload it
+  command: "scp -P {{ansible_ssh_port}} roles/script-imperial-march/files/imperialmarch.rsc {{ansible_ssh_user}}@{{inventory_hostname}}:/imperialmarch.rsc"
+  when: ImperialScriptExists.stdout != "EXISTS"
+
+- name: if script not exist install it
+  command: "ssh -T -p {{ansible_ssh_port}} {{ansible_ssh_user}}@{{inventory_hostname}} '/import file=imperialmarch.rsc'"
+  when: ImperialScriptExists.stdout != "EXISTS"
+
+- name: Run srcipt if it already exists
+  command: "ssh -T -p {{ansible_ssh_port}} {{ansible_ssh_user}}@{{inventory_hostname}} '/system script run imperialmarch'"
+  when: ImperialScriptExists.stdout == "EXISTS"

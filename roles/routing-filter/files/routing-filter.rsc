@@ -1,0 +1,1 @@
+:if ([/routing filter find where prefix="192.168.0.0/24" prefix-length="32" chain="ospf-in" action=accept] = "") do={/routing filter add action=accept chain=ospf-in prefix=192.168.0.0/24 prefix-length=32 place-before=0}

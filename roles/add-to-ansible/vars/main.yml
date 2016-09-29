@@ -1,0 +1,3 @@
+---
+ansible_mgmt_user: "mikroansible"
+ansible_mgmt_user_key: "PASTE_SSH_PUB_KEY_HERE"

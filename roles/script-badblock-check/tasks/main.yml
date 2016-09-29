@@ -1,0 +1,16 @@
+---
+- name: Check for script exists
+  command: bash -c "cat roles/script-badblock-check/files/check.rsc | ssh -T {{inventory_hostname}} -p {{ansible_ssh_port}}"
+  register: BBcheckScriptExists
+
+- name: if script not exist upload it
+  command: "scp -P {{ansible_ssh_port}} roles/script-badblock-check/files/BBcheck.rsc {{ansible_ssh_user}}@{{inventory_hostname}}:/BBcheck.rsc"
+  when: BBcheckScriptExists.stdout != "EXISTS"
+
+- name: if script not exist install it
+  command: "ssh -T -p {{ansible_ssh_port}} {{ansible_ssh_user}}@{{inventory_hostname}} '/import file=BBcheck.rsc'"
+  when: BBcheckScriptExists.stdout != "EXISTS"
+
+- name: Run Route check srcipt if it already exists
+  command: "ssh -T -p {{ansible_ssh_port}} {{ansible_ssh_user}}@{{inventory_hostname}} '/system script run BBcheck'"
+  when: BBcheckScriptExists.stdout == "EXISTS"

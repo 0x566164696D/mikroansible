@@ -1,0 +1,4 @@
+---
+- name: Email setup
+  command: bash -c "cat roles/email-setup/files/email-setup.rsc | ssh -T {{inventory_hostname}} -p {{ansible_ssh_port}}"  
+

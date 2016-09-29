@@ -1,0 +1,3 @@
+---
+- name: Configure LCD
+  command: bash -c "cat roles/lcd-settings/files/lcd-settings.rsc | ssh -T {{inventory_hostname}} -p {{ansible_ssh_port}}"  

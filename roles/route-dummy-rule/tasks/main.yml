@@ -1,0 +1,3 @@
+---
+- name: Add ip route dummy rules
+  command: bash -c "cat roles/route-dummy-rule/files/route-dummy-rule.rsc | ssh -T {{inventory_hostname}} -p {{ansible_ssh_port}}"  

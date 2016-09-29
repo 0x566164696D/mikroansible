@@ -1,0 +1,3 @@
+---
+- name: Recreate DNS Static Records
+  command: bash -c "cat roles/dns-static-office/files/dns-static.rsc | ssh -T {{inventory_hostname}} -p {{ansible_ssh_port}}"  

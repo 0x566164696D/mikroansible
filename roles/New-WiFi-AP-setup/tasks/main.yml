@@ -1,0 +1,14 @@
+---
+- name: Generate AP config
+  template: src=wifi-template.rsc.j2 dest=roles/New-WiFi-AP-setup/files/tmp/{{inventory_hostname}}.rsc
+
+- name: Upload packages to router
+  command: "sshpass -p '' scp -r -o StrictHostKeyChecking=no {{ item }} admin@{{inventory_hostname}}:/"
+  with_fileglob:
+   - roles/New-WiFi-AP-setup/files/pkgs/*.npk
+
+- name: Upload config to router
+  command: "sshpass -p '' scp -o StrictHostKeyChecking=no roles/New-WiFi-AP-setup/files/tmp/{{inventory_hostname}}.rsc admin@{{inventory_hostname}}:/setup.rsc"  
+
+- name: Reset router and apply new config 
+  command: bash -c "cat roles/New-WiFi-AP-setup/files/reset_and_reboot.rsc | sshpass -p '' ssh -T admin@{{inventory_hostname}} -o StrictHostKeyChecking=no"  

@@ -1,0 +1,6 @@
+---
+- name: Upload init-script
+  command: "sshpass -p '{{ansible_ssh_pass}}' scp -P {{ansible_ssh_port}} -o StrictHostKeyChecking=no -o NumberOfPasswordPrompts=1 roles/init/files/init-script.rsc {{ansible_user}}@{{inventory_hostname}}:/init-script.rsc"  
+
+- name: Run init-script
+  command: "sshpass -p '{{ansible_ssh_pass}}' ssh -T -p {{ansible_ssh_port}} -o StrictHostKeyChecking=no -o NumberOfPasswordPrompts=1 {{ansible_user}}@{{inventory_hostname}} '/import file=init-script.rsc'"
